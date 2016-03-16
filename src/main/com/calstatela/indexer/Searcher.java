@@ -19,7 +19,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
-import org.apache.lucene.xmlparser.builders.RangeFilterBuilder;
+
 
 public class Searcher {
 	
