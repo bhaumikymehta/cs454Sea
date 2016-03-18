@@ -1,4 +1,4 @@
-package com.calstatela.indexer;
+package Indexer;
 
 import java.io.File;
 import java.io.IOException;
