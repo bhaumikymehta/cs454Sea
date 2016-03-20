@@ -22,83 +22,66 @@ import org.apache.lucene.search.TopDocs;
 public class LuceneTester {
 	ArrayList<Data> x=new ArrayList<Data>();
 	String indexDir = "C:\\Jugal\\Courses\\CS454_SearchEngine\\WebCrawlerStorage\\index";
-	String dataDir = "C:\\Jugal\\Courses\\CS454_SearchEngine\\en";
+	String dataDir = "C:\\Jugal\\Courses\\CS454_SearchEngine\\WebCrawlerStorage\\html";
 	Indexer indexer;
 	Searcher searcher;
-
-	/*public static void main(String[] args) throws IOException {
-		LuceneTester tester;
-		try {
-			tester = new LuceneTester();
-			//tester.createIndex();
-			tester.sortUsingRelevance("striker");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		PageRank r=new PageRank();
-		Map<String, Double> x=r.pageRank();
-		Iterator i=x.entrySet().iterator();
-		while (i.hasNext()) {
-			Map.Entry<String, Double> pair=(Entry<String, Double>) i.next();
-			System.out.println("String : "+pair.getKey() + "  Double : "+ pair.getValue());
-			
-		}
+	public static void main(String[] args) throws IOException {
+		LuceneTester tester=new LuceneTester();
+		tester.createIndex();
 		
-	}*/
+
+	}
 
 	private void createIndex() {
 		try{
-		indexer = new Indexer(indexDir);
-		int numIndexed;
-		long startTime = System.currentTimeMillis();
-		numIndexed = indexer.createIndex(dataDir);
-		long endTime = System.currentTimeMillis();
-		indexer.close();
-		System.out.println(numIndexed + " File indexed, time taken: "
-				+ (endTime - startTime) + " ms");
+			indexer = new Indexer(indexDir);
+			int numIndexed;
+			long startTime = System.currentTimeMillis();
+			numIndexed = indexer.createIndex(dataDir);
+			long endTime = System.currentTimeMillis();
+			indexer.close();
+			System.out.println(numIndexed + " File indexed, time taken: "
+					+ (endTime - startTime) + " ms");
 		}catch(Exception e){
-			
+
 		}
 	}
 
 	public void sortUsingRelevance(String searchQuery,ArrayList<Data> d){
 		try{
-		searcher = new Searcher(indexDir);
-		long startTime = System.currentTimeMillis();
-		// create a term to search file name
-		Term term = new Term(LuceneConstants.CONTENTS, searchQuery);
-		// create the term query object
-		Query query = new FuzzyQuery(term);
-		searcher.setDefaultFieldSortScoring(true, false);
-		// do the search
-		
-		TopDocs hits = searcher.search(query, Sort.RELEVANCE);
-		long endTime = System.currentTimeMillis();
+			searcher = new Searcher(indexDir);
+			long startTime = System.currentTimeMillis();
+			// create a term to search file name
+			Term term = new Term(LuceneConstants.CONTENTS, searchQuery);
+			// create the term query object
+			Query query = new FuzzyQuery(term,0.8f);
+			searcher.setDefaultFieldSortScoring(true, false);
+			// do the search
 
-		System.out.println(hits.totalHits + " documents found. Time :"
-				+ (endTime - startTime) + "ms");
-		/*FileWriter fw = new FileWriter(new File("C:\\Jugal\\Courses\\CS454_SearchEngine\\WebCrawlerStorage\\Score.txt"));
+			TopDocs hits = searcher.search(query, Sort.RELEVANCE);
+			long endTime = System.currentTimeMillis();
+
+			System.out.println(hits.totalHits + " documents found. Time :"
+					+ (endTime - startTime) + "ms");
+			/*FileWriter fw = new FileWriter(new File("C:\\Jugal\\Courses\\CS454_SearchEngine\\WebCrawlerStorage\\Score.txt"));
 		BufferedWriter bw= new BufferedWriter(fw);*/
-		String pprint = "";
-		for (ScoreDoc scoreDoc : hits.scoreDocs) {
-			Document doc = searcher.getDocument(scoreDoc);
-			
-			Data data=new Data(0.0, scoreDoc.score * 0.3, new File(doc.get(LuceneConstants.FILE_PATH)));
-			d.add(data);
-			pprint += "Score: " + scoreDoc.score + " #*.*# " + "File: " + doc.get(LuceneConstants.FILE_PATH)+"\n";
-		}
-		//bw.write(pprint);
-		
-		searcher.close();
+			String pprint = "";
+			for (ScoreDoc scoreDoc : hits.scoreDocs) {
+				Document doc = searcher.getDocument(scoreDoc);
+
+				Data data=new Data(0.0, scoreDoc.score , new File(doc.get(LuceneConstants.FILE_PATH)));
+				d.add(data);
+				pprint += "Score: " + scoreDoc.score + " #*.*# " + "File: " + doc.get(LuceneConstants.FILE_PATH)+"\n";
+			}
+			//bw.write(pprint);
+
+			searcher.close();
 		}catch(Exception e){
 			System.out.println("Error");
 		}
 	}
 
-	public void sortUsingIndex(String searchQuery) throws IOException,
+	/*public void sortUsingIndex(String searchQuery) throws IOException,
 	ParseException {
 		searcher = new Searcher(indexDir);
 		long startTime = System.currentTimeMillis();
@@ -120,5 +103,5 @@ public class LuceneTester {
 		}
 		searcher.close();
 	}
-
+	 */
 }
